@@ -15,16 +15,14 @@ static history *hist;
 static char *subst(char *line) {
   char *res = line;
   if (line[0] == '!') {
+    char *extra_string = NULL;
     if (line[1] == '!') {
-      res = line; // Re-use res as a temporary here.
+      extra_string = line + 2;
       line = history_last(hist);
       if (line == NULL) {
         osh_str_error("No commands in history.");
         return NULL;
       }
-      res = concat(line, res+2);
-      // Free the memory allocated by history_last.
-      free(line);
     } else {
       char *err_str;
       long n = parse_number(line + 1, &err_str);
@@ -35,18 +33,20 @@ static char *subst(char *line) {
         osh_str_error(err_str);
         return NULL;
       }
+      // err_str contains the leftovers of parsing.
+      // Eg; !40asdf, err_str = asdf
+      extra_string = err_str;
 
       line = history_get(hist, n);
       if (line == NULL) {// This line doesn't exist (yet).
         osh_str_error("No such command in history.");
         return NULL;
       }
-      // err_str has the rest of the parsed number, concatenate it.
-      res = concat(line, err_str);
-      // Free the memory allocated by history_get.
-      free(line);
     }
-    // Print the substituted line.
+    res = concat(line, extra_string);
+    // Free the memory allocated by history_get or history_last.
+    free(line);
+    // Print the substituted and concatenated line.
     printf("%s\n",res);
   }
   return res;
