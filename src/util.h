@@ -9,8 +9,7 @@
 #define osh_str_error(s) fprintf(stderr, RED_B"error: "RESET"%s\n", s)
 #define osh_error(x) osh_str_error(strerror(errno))
 
-/** This can parse numbers in hexadecimal, octal and decimal.
- * like the following respective examples: !0x4, !04, !4.*/
+char *concat(const char*, const char*);
 long parse_number(const char *, char **);
 
 #endif /*_UTIL_H_*/

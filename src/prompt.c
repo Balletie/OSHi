@@ -13,13 +13,18 @@ static history *hist;
  * the substituted line from history, 'line' if the command was not
  * substituted, NULL when an error occurred (such as '!asdf')*/
 static char *subst(char *line) {
+  char *res = line;
   if (line[0] == '!') {
     if (line[1] == '!') {
+      res = line; // Re-use res as a temporary here.
       line = history_last(hist);
       if (line == NULL) {
         osh_str_error("No commands in history.");
         return NULL;
       }
+      res = concat(line, res+2);
+      // Free the memory allocated by history_last.
+      free(line);
     } else {
       char *err_str;
       long n = parse_number(line + 1, &err_str);
@@ -36,11 +41,15 @@ static char *subst(char *line) {
         osh_str_error("No such command in history.");
         return NULL;
       }
+      // err_str has the rest of the parsed number, concatenate it.
+      res = concat(line, err_str);
+      // Free the memory allocated by history_get.
+      free(line);
     }
     // Print the substituted line.
-    printf("%s\n",line);
+    printf("%s\n",res);
   }
-  return line;
+  return res;
 }
 
 void prompt_init() {
@@ -61,7 +70,9 @@ char *prompt(const char *ps1) {
 
   if (ps1)
     printf(ps1);
+
   ssize_t num_chars = getline(&line, &length, stdin);
+
   if (num_chars < 0) {
     osh_error(errno);
     free(line);
