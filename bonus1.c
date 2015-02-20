@@ -4,21 +4,19 @@
 #include<string.h>
 #include<sys/types.h>
 #include<sys/wait.h>
-#include<readline/readline.h>
 #include<unistd.h>
 
-#include "history.h"
+#include "prompt.h"
 #include "util.h"
 
 #define MAX_LINE 80 /*The maximum length command*/
 int should_run = 1;/*flag to determine when to exit program*/
-history *hist;
 
 /** Execute a builtin command. Returns 1 if the specified command
  * was a builtin and was executed, return 0 otherwise.*/
 int builtin(char *cmd) {
   if (strcmp(cmd, "history") == 0) {
-    history_pprint(hist);
+    prompt_history();
     return 1;
   } else if (strcmp(cmd, "exit") == 0) {
     should_run = 0;
@@ -58,41 +56,6 @@ void execute(char **args, int argc) {
   return;
 }
 
-/** This function substitutes !! and !N commands, and adds commands to the
- * history.*/
-char *subst(char *line) {
-  if (line[0] == '!') {
-    if (line[1] == '!') {
-      line = history_last(hist);
-      if (line == NULL) {
-        osh_str_error("No commands in history.");
-        return NULL;
-      }
-    } else {
-      char *err_str;
-      long n = parse_number(line + 1, &err_str);
-
-      if (n < 0) {
-        // Parsing the number was not successful. It was
-        // either negative or not a number at all.
-        osh_str_error(err_str);
-        return NULL;
-      }
-
-      line = history_get(hist, n);
-      if (line == NULL) {// This line doesn't exist (yet).
-        osh_str_error("Can't see into the future.");
-        return NULL;
-      }
-    }
-    // Print the substituted line.
-    printf("%s\n",line);
-  }
-  // Add the line to the history.
-  history_append(hist, line);
-  return line;
-}
-
 int tokenize(char **args, char *line) {
   int argc = 0;
   char *current_arg;
@@ -111,24 +74,19 @@ int tokenize(char **args, char *line) {
 
 int main(void) {
   char *args[MAX_LINE/2+1];/*command line arguments*/
-  hist = history_new(1);
+  prompt_init();
 
   while (should_run) {
-    // TODO: replace readline with own prompt.
-    char *line = readline("oshi-> ");
+    char *line = prompt("oshi-> ");
     int argc;
-    char *subst_str;
 
-    subst_str = subst(line);
     // If the command was valid, tokenize it and execute.
-    if (subst_str) {
-      argc = tokenize(args, subst_str);
+    if (line) {
+      argc = tokenize(args, line);
       execute(args, argc);
-      // Free subst_str, because history returns a copy.
-      if (subst_str != line) free(subst_str);
     }
     free(line); // Free the memory.
   }
-  history_delete(hist); // Delete the history.
+  prompt_delete();
   return EXIT_SUCCESS;
 }

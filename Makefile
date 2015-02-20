@@ -1,6 +1,6 @@
 .PHONY: all clean
 CC=gcc
-CFLAGS=-I. -lreadline -lm -std=c99 -Wall -ggdb
+CFLAGS=-I. -lm -std=c99 -Wall -ggdb
 
 SOURCES=$(wildcard *.c)
 OBJ=$(patsubst %.c, %.o, $(SOURCES))
