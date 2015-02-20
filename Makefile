@@ -1,4 +1,4 @@
-.PHONY: first install clean
+.PHONY: first-target install clean
 
 ifndef out
 out=.
@@ -18,7 +18,7 @@ OBJ=$(subst $(SRC_DIR)/,$(OBJ_DIR)/,$(patsubst %.c, %.o, $(SRC)))
 CC=gcc
 CFLAGS=-I./$(INC_DIR) -lm -std=c99 -Wall -ggdb
 
-first: $(BIN_NAME)
+first-target: $(BIN_NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(DIR_GUARD)
