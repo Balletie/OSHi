@@ -1,17 +1,24 @@
 .PHONY: all clean
+INC_DIR=src
+SRC_DIR=src
+OBJ_DIR=obj
+BIN_DIR=bin
+BIN_NAME=ex_bonus1
+BIN_PATH=$(addprefix $(BIN_DIR)/, $(BIN_NAME))
+
+SRC=$(wildcard $(SRC_DIR)/*.c)
+OBJ=$(subst $(SRC_DIR)/,$(OBJ_DIR)/,$(patsubst %.c, %.o, $(SRC)))
+
 CC=gcc
-CFLAGS=-I. -lm -std=c99 -Wall -ggdb
+CFLAGS=-I./$(INC_DIR) -lm -std=c99 -Wall -ggdb
 
-SOURCES=$(wildcard *.c)
-OBJ=$(patsubst %.c, %.o, $(SOURCES))
-
-all: ex_bonus1
-
-clean:
-	rm *.o
-
-%.o: %.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-ex_bonus1: $(OBJ)
+$(BIN_PATH): $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@
+
+all: $(BIN_PATH)
+
+clean:
+	rm $(OBJ_DIR)/*.o
