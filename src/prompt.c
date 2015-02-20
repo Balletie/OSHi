@@ -12,7 +12,7 @@ static history *hist;
 /** This function substitutes !! and !N commands. It takes a 'line', and returns
  * the substituted line from history, 'line' if the command was not
  * substituted, NULL when an error occurred (such as '!asdf')*/
-char *subst(char *line) {
+static char *subst(char *line) {
   if (line[0] == '!') {
     if (line[1] == '!') {
       line = history_last(hist);
@@ -33,7 +33,7 @@ char *subst(char *line) {
 
       line = history_get(hist, n);
       if (line == NULL) {// This line doesn't exist (yet).
-        osh_str_error("Can't see into the future.");
+        osh_str_error("No such command in history.");
         return NULL;
       }
     }
