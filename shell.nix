@@ -1,9 +1,6 @@
-let pkgs = import <nixpkgs> {};
-    stdenv = pkgs.stdenv;
-in {
-  cDevEnv = stdenv.mkDerivation {
-    name = "c-dev-env";
+{ stdenv ? (import <nixpkgs> {}).stdenv }:
+
+stdenv.mkDerivation {
+    name = "OSHi";
     src = ./.;
-    buildInputs = [pkgs.gcc pkgs.valgrind];
-  }; 
 }

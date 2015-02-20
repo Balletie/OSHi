@@ -1,10 +1,14 @@
 .PHONY: first install clean
 
-DIR_GUARD=mkdir -p $(@D)
+ifndef out
+out=.
+endif
+
+DIR_GUARD=@mkdir -p $(@D)
 INC_DIR=src
 SRC_DIR=src
 OBJ_DIR=obj
-BIN_DIR=bin
+BIN_DIR=$(out)/bin
 BIN_NAME=ex_bonus1
 BIN_PATH=$(addprefix $(BIN_DIR)/, $(BIN_NAME))
 
@@ -25,7 +29,7 @@ $(BIN_NAME): $(OBJ)
 
 $(BIN_PATH): $(BIN_NAME)
 	$(DIR_GUARD)
-	mv $(BIN_NAME) $(BIN_DIR)
+	mv $(BIN_NAME) $@
 
 install: $(BIN_PATH)
 
