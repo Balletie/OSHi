@@ -66,9 +66,11 @@ char *history_last(history *hist) {
 
 /** Pretty prints the history, with padding for the numbers on the left side.*/
 void history_pprint(history *hist) {
-  unsigned int_length = floor(log10(abs(hist->count))) + 1;
+  /** Determine the length of the largest command number. Use count - 1,
+   * since we start counting from zero.*/
+  unsigned int_length = floor(log10(abs(hist->count - 1))) + 1;
   for (int i = 0; i < hist->count; i++) {
-    printf("%*d %s\n",int_length, i, hist->lines[i]);
+    printf("  %*d  %s\n",int_length, i, hist->lines[i]);
     fflush(stdout);
   }
 }
