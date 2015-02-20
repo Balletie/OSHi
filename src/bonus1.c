@@ -1,9 +1,11 @@
+#define _XOPEN_SOURCE
 #include<errno.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<sys/types.h>
 #include<sys/wait.h>
+#include<signal.h>
 #include<unistd.h>
 
 #include "prompt.h"
@@ -56,6 +58,7 @@ void execute(char **args, int argc) {
   return;
 }
 
+/** Tokenize the string and put the tokens in the args array.*/
 int tokenize(char **args, char *line) {
   int argc = 0;
   char *current_arg;
@@ -72,8 +75,20 @@ int tokenize(char **args, char *line) {
   return argc;
 }
 
+void shell_init() {
+  struct sigaction sa;
+  // TODO: make own handler for retrieving exit status, etc.
+  sa.sa_handler = SIG_IGN;
+  sigemptyset(&sa.sa_mask);
+  // No flags
+  sa.sa_flags = 0;
+  if (sigaction(SIGCHLD, &sa, NULL) < 0)
+    osh_error(errno);
+}
+
 int main(void) {
   char *args[MAX_LINE/2+1];/*command line arguments*/
+  shell_init();
   prompt_init();
 
   while (should_run) {
@@ -84,8 +99,8 @@ int main(void) {
     if (line) {
       argc = tokenize(args, line);
       execute(args, argc);
+      free(line); // Free the memory.
     }
-    free(line); // Free the memory.
   }
   prompt_delete();
   return EXIT_SUCCESS;

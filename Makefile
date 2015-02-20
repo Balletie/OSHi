@@ -9,7 +9,7 @@ INC_DIR=src
 SRC_DIR=src
 OBJ_DIR=obj
 BIN_DIR=$(out)/bin
-BIN_NAME=ex_bonus1
+BIN_NAME=oshi
 BIN_PATH=$(addprefix $(BIN_DIR)/, $(BIN_NAME))
 
 SRC=$(wildcard $(SRC_DIR)/*.c)
