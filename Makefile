@@ -1,4 +1,6 @@
 .PHONY: all clean
+
+DIR_GUARD=mkdir -p $(@D)
 INC_DIR=src
 SRC_DIR=src
 OBJ_DIR=obj
@@ -13,9 +15,11 @@ CC=gcc
 CFLAGS=-I./$(INC_DIR) -lm -std=c99 -Wall -ggdb
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(DIR_GUARD)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(BIN_PATH): $(OBJ)
+	$(DIR_GUARD)
 	$(CC) $(CFLAGS) $^ -o $@
 
 all: $(BIN_PATH)
