@@ -19,7 +19,7 @@
  * The return value indicates whether the shell should exit.*/
 int execute(char **args, int argc) {
   if (argc == 0) return 1; // No command.
-  builtin_t bi;
+  builtin_func_t bi;
 
   // If the command is a builtin, execute that instead.
   if ((bi = builtin(args[0]))) return bi(args);
