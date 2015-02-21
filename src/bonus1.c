@@ -67,7 +67,6 @@ int tokenize(char **args, char *line) {
 
 void shell_init() {
   struct sigaction sa;
-  // TODO: make own handler for retrieving exit status, etc.
   sa.sa_handler = SIG_IGN;
   sigemptyset(&sa.sa_mask);
   // No flags

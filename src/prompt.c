@@ -82,8 +82,9 @@ int prompt(const char *ps1, char **line_addr) {
       osh_error(errno);
       return 1; // Keep spinning.
     } else {
+      // EOF found, exit the shell.
       printf("exit\n");
-      return 0; // EOF found.
+      return 0;
     }
   }
   // remove newline character.
