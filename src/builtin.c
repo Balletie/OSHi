@@ -17,10 +17,12 @@ builtin_func_t builtin(char *cmd) {
   return NULL;
 }
 
+/** Just return 0 (false), causing the shell to exit.*/
 int builtin_exit(char **args) {
   return 0;
 }
 
+/** Show the shell history.*/
 int builtin_history(char **args) {
   prompt_history();
   return 1;

@@ -1,6 +1,8 @@
 #ifndef _BUILTIN_H_
 #define _BUILTIN_H_
 
+/** Takes the args given with the command, returns whether the shell
+ * should exit.*/
 typedef int (*builtin_func_t)(char **);
 typedef struct builtin_t {
   const char      *name;
@@ -16,7 +18,7 @@ enum {
 };
 
 builtin_func_t builtin(char *cmd);
-int             builtin_exit(char **);
-int             builtin_history(char **);
+int            builtin_exit(char **);
+int            builtin_history(char **);
 
 #endif /*_BUILTIN_H_*/

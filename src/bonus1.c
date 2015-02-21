@@ -1,4 +1,4 @@
-#define _XOPEN_SOURCE
+#define _XOPEN_SOURCE // Needed for signal.
 #include<errno.h>
 #include<stdio.h>
 #include<stdlib.h>
