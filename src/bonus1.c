@@ -65,7 +65,7 @@ int tokenize(char **args, char *line) {
   return argc;
 }
 
-void shell_init() {
+void shell_init(void) {
   struct sigaction sa;
   sa.sa_handler = SIG_IGN;
   sigemptyset(&sa.sa_mask);

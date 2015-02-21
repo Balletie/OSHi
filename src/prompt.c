@@ -52,11 +52,11 @@ static char *subst(char *line) {
   return res;
 }
 
-void prompt_init() {
+void prompt_init(void) {
   if (hist == NULL) hist = history_new(1);
 }
 
-void prompt_history() {
+void prompt_history(void) {
   history_pprint(hist);
 }
 
@@ -105,6 +105,6 @@ int prompt(const char *ps1, char **line_addr) {
   return 1; // Keep spinning
 }
 
-void prompt_delete() {
+void prompt_delete(void) {
   if (hist != NULL) history_delete(hist);
 }
