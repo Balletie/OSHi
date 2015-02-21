@@ -1,4 +1,4 @@
-.PHONY: first-target install clean
+.PHONY: first-target install uninstall clean
 
 DIR_GUARD=@mkdir -p $(@D)
 INC_DIR=src
