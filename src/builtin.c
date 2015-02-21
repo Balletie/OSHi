@@ -3,8 +3,12 @@
 #include "builtin.h"
 #include "prompt.h"
 
-builtin_t  builtins[BI_NUM_BUILTINS] = {{"exit", &builtin_exit},\
-                                        {"history", &builtin_history}};
+/** Builtin table: To create a new builtin:
+ *    1) Add enum value in builtin.h (keep BI_NUM_BUILTINS last)
+ *    2) Implement function
+ *    3) Put struct with name and function pointer in the table below.*/
+builtin_t builtins[BI_NUM_BUILTINS] = {{"exit",    &builtin_exit},\
+                                       {"history", &builtin_history}};
 
 /** Returns the builtin command given by 'cmd'.*/
 builtin_func_t builtin(char *cmd) {

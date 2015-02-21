@@ -22,7 +22,7 @@ int execute(char **args, int argc) {
   builtin_func_t bi;
 
   // If the command is a builtin, execute that instead.
-  if ((bi = builtin(args[0]))) return bi(args);
+  if ((bi = builtin(args[0]))) return (*bi)(args);
 
   // If the last token is an ampersand, run in background.
   int wait = 0;
