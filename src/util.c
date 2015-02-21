@@ -2,6 +2,8 @@
 #include <string.h>
 #include "util.h"
 
+/** Concatenate the two strings, allocating a new string long enough to hold the
+ * result string.*/
 char *concat(const char *str1, const char *str2) {
   size_t len1 = strlen(str1) + 1;
   size_t len2 = strlen(str2) + 1;

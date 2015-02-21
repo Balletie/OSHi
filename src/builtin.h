@@ -5,7 +5,7 @@
  * should exit.*/
 typedef int (*builtin_func_t)(char **);
 typedef struct builtin_t {
-  const char      *name;
+  const char     *name;
   builtin_func_t function;
 } builtin_t;
 
