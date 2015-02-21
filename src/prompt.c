@@ -63,7 +63,7 @@ void prompt_history() {
 /** Displays a prompt with an optional char * 'ps1', reads the user's input and
  * adds the line to the history. Output is the effective command, or NULL when
  * and error occurred.*/
-char *prompt(const char *ps1) {
+int prompt(const char *ps1, char **line_addr) {
   char *line = NULL;
   char *subst_line = NULL;
   size_t length = 0;
@@ -71,12 +71,20 @@ char *prompt(const char *ps1) {
   if (ps1)
     printf(ps1);
 
+  // Set errno to 0 to check later if an error occurred.
+  errno=0;
   ssize_t num_chars = getline(&line, &length, stdin);
 
   if (num_chars < 0) {
-    osh_error(errno);
     free(line);
-    return NULL;
+    *line_addr = NULL;
+    if (errno != 0) {
+      osh_error(errno);
+      return 1; // Keep spinning.
+    } else {
+      printf("exit\n");
+      return 0; // EOF found.
+    }
   }
   // remove newline character.
   if (line[num_chars - 1] == '\n')
@@ -92,7 +100,8 @@ char *prompt(const char *ps1) {
     // Add the line to the history.
     history_append(hist, subst_line);
 
-  return subst_line;
+  *line_addr = subst_line;
+  return 1; // Keep spinning
 }
 
 void prompt_delete() {

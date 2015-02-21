@@ -3,7 +3,7 @@
 
 void prompt_init();
 void prompt_history();
-char *prompt(const char *);
+int  prompt(const char *, char **);
 void prompt_delete();
 
 #endif /*_PROMPT_H_*/

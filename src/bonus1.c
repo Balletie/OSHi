@@ -16,11 +16,11 @@ int should_run = 1;/*flag to determine when to exit program*/
 
 /** Execute a builtin command. Returns 1 if the specified command
  * was a builtin and was executed, return 0 otherwise.*/
-int builtin(char *cmd) {
-  if (strcmp(cmd, "history") == 0) {
+int builtin(char **cmd) {
+  if (strcmp(cmd[0], "history") == 0) {
     prompt_history();
     return 1;
-  } else if (strcmp(cmd, "exit") == 0) {
+  } else if (strcmp(cmd[0], "exit") == 0) {
     should_run = 0;
     return 1;
   }
@@ -39,9 +39,6 @@ void execute(char **args, int argc) {
     wait = 1; //If there's no command followed by an '&', wait for the child.
   else
     args[argc-1] = NULL; // Remove the ampersand.
-
-  // If the command was a builtin, then don't fork but just return.
-  if (builtin(args[0])) return;
 
   process_id = fork();
 
@@ -92,13 +89,17 @@ int main(void) {
   prompt_init();
 
   while (should_run) {
-    char *line = prompt("oshi-> ");
+    char *line = NULL;
+    should_run = prompt("oshi-> ", &line);
     int argc;
 
     // If the command was valid, tokenize it and execute.
     if (line) {
       argc = tokenize(args, line);
-      execute(args, argc);
+      // If the command is not a builtin, execute normally.
+      if (!builtin(args))
+        execute(args, argc);
+
       free(line); // Free the memory.
     }
   }
