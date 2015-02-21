@@ -8,34 +8,27 @@
 #include<signal.h>
 #include<unistd.h>
 
+#include "builtin.h"
 #include "prompt.h"
 #include "util.h"
 
 #define MAX_LINE 80 /*The maximum length command*/
-int should_run = 1;/*flag to determine when to exit program*/
-
-/** Execute a builtin command. Returns 1 if the specified command
- * was a builtin and was executed, return 0 otherwise.*/
-int builtin(char **cmd) {
-  if (strcmp(cmd[0], "history") == 0) {
-    prompt_history();
-    return 1;
-  } else if (strcmp(cmd[0], "exit") == 0) {
-    should_run = 0;
-    return 1;
-  }
-  return 0;
-}
 
 /** Execute a command with the specified arguments, and amount of arguments.
- * This command may be a builtin or an executable file on $PATH.*/
-void execute(char **args, int argc) {
+ * This command may be a builtin or an executable file on $PATH.
+ * The return value indicates whether the shell should exit.*/
+int execute(char **args, int argc) {
+  if (argc == 0) return 1; // No command.
+  builtin_t bi;
+
+  // If the command is a builtin, execute that instead.
+  if ((bi = builtin(args[0]))) return bi(args);
+
   // If the last token is an ampersand, run in background.
   int wait = 0;
   pid_t process_id;
 
-  if (argc == 0) return;
-  else if (argc == 1 || args[argc-1][0] != '&')
+  if (argc == 1 || args[argc-1][0] != '&')
     wait = 1; //If there's no command followed by an '&', wait for the child.
   else
     args[argc-1] = NULL; // Remove the ampersand.
@@ -52,7 +45,7 @@ void execute(char **args, int argc) {
   else if (process_id < 0)
     osh_error(errno);
 
-  return;
+  return 1;
 }
 
 /** Tokenize the string and put the tokens in the args array.*/
@@ -85,6 +78,7 @@ void shell_init() {
 
 int main(void) {
   char *args[MAX_LINE/2+1];/*command line arguments*/
+  int should_run = 1;/*flag to determine when to exit program*/
   shell_init();
   prompt_init();
 
@@ -96,9 +90,7 @@ int main(void) {
     // If the command was valid, tokenize it and execute.
     if (line) {
       argc = tokenize(args, line);
-      // If the command is not a builtin, execute normally.
-      if (!builtin(args))
-        execute(args, argc);
+      should_run = execute(args, argc);
 
       free(line); // Free the memory.
     }
